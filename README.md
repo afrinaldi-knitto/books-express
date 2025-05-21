@@ -49,6 +49,11 @@ JWT_SECRET=SECRET
   npx prisma migrate dev --name init
   npx prisma generate
 ```
+<p>7. Generate API docs</p>
+
+```bash
+  npx openapi-generator-cli generate -i openapi.yaml -g html -o ./api-docs
+```
 
 ## Run
 
