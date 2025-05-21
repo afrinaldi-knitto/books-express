@@ -1,0 +1,321 @@
+openapi: 3.0.1
+info:
+  title: Your API
+  description: Authentication APIs collection
+  version: "1.0.0"
+servers:
+  - url: http://localhost:2201/api
+  - url: http://localhost:3000/api
+tags:
+  - name: Authentication
+    description: Authentication APIs collection
+  - name: Common
+    description: Common APIs collection
+  - name: Book
+    description: Book APIs collection
+  - name: Author
+    description: Author APIs collection
+paths:
+  /register:
+    post:
+      summary: Register new user
+      tags: [Authentication]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserRegisterInput"
+            example:
+              email: nal@email.com
+              password: nalldev
+      responses:
+        "200":
+          description: Success
+        "409":
+          description: Email already used
+        "500":
+          description: Internal Server Error
+
+  /login:
+    post:
+      summary: Login to your account
+      tags: [Authentication]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserLoginInput"
+            example:
+              email: nal@email.com
+              password: nalldev
+      responses:
+        "200":
+          description: Success
+        "401":
+          description: Invalid email/password
+        "500":
+          description: Internal Server Error
+
+  /me:
+    get:
+      summary: Get user info
+      tags: [Authentication]
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Success
+        "401":
+          description: Invalid token
+        "500":
+          description: Internal Server Error
+
+  /users:
+    get:
+      summary: Get users
+      tags: [Authentication]
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Success
+        "403":
+          description: Forbidden
+        "500":
+          description: Internal Server Error
+
+  /info:
+    get:
+      tags: [Common]
+      responses:
+        "200":
+          description: A Successful response
+          content:
+            application/json:
+              example:
+                app: My Backend
+                version: 1.0.0
+
+  /books:
+    get:
+      summary: GET books
+      tags: [Book]
+      responses:
+        "200":
+          description: Success
+        "400":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+
+  /book/{id}:
+    get:
+      summary: Get book
+      tags: [Book]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Success
+        "400":
+          description: Not found
+        "500":
+          description: Internal server error
+    put:
+      summary: Update a book
+      security:
+        - bearerAuth: []
+      tags: [Book]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                author_id:
+                  type: integer
+      responses:
+        "200":
+          description: Updated
+        "404":
+          description: Not Found.
+    delete:
+      summary: Delete a book
+      security:
+        - bearerAuth: []
+      tags: [Book]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted successfully
+        "404":
+          description: Not Found
+
+  /book:
+    post:
+      summary: Insert book
+      security:
+        - bearerAuth: []
+      tags: [Book]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                author_id:
+                  type: integer
+            example:
+              title: how to be express expert?
+              author_id: 4
+      responses:
+        "200":
+          description: Success
+        "500":
+          description: Internal Server Error
+
+  /authors:
+    get:
+      summary: Get all authors
+      tags: [Author]
+      responses:
+        "200":
+          description: Success
+        "500":
+          description: Internal server error
+
+  /author/{id}:
+    get:
+      summary: Get author
+      tags: [Author]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Success
+        "500":
+          description: Internal server error
+    patch:
+      summary: Update author by id
+      security:
+        - bearerAuth: []
+      tags: [Author]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: Author ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+            example:
+              name: new name
+      responses:
+        "200":
+          description: Author was updated
+        "500":
+          description: Internal server error
+    delete:
+      summary: delete author
+      security:
+        - bearerAuth: []
+      tags: [Author]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Updated
+        "400":
+          description: Not Found
+        "500":
+          description: Internal server error
+
+  /author:
+    post:
+      summary: Create new author
+      security:
+        - bearerAuth: []
+      tags: [Author]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+            example:
+              name: nal
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Validation Error
+        "500":
+          description: Internal server error
+
+components:
+  schemas:
+    UserRegisterInput:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 6
+    UserLoginInput:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 1
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
