@@ -1,10 +1,7 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { Book, BookPayload } from "../models/book";
-import { db } from "../db";
 import { authenticationJwt, requireRole } from "../middleware/auth";
 import { prisma } from "../prisma";
-import { number } from "zod";
-import { Prisma } from "@prisma/client";
 
 const router = Router();
 
@@ -205,7 +202,13 @@ router.put(
       res.json({
         id: Number(req.params.id),
         title: book.title,
-        author: book.authors,
+        author: book.authors
+          ? {
+              id: book.authors.id,
+              name: book.authors.name,
+              books: null,
+            }
+          : null,
       });
     } catch (error) {
       next(error);

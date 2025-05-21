@@ -9,7 +9,6 @@ import {
   requireRole,
 } from "../middleware/auth";
 import { prisma } from "../prisma";
-import { Prisma } from "@prisma/client";
 
 const UserRegisterSchema = z.object({
   email: z.string().email(),
@@ -103,7 +102,7 @@ router.post("/register", async (req, res, next) => {
  *       500:
  *         description: Internal Server Error
  */
-router.post("/login", async (req, res, next) => {
+router.post("/login", async (req, res, next): Promise<void> => {
   try {
     const { email, password } = UserLoginSchema.parse(req.body);
 
@@ -113,11 +112,13 @@ router.post("/login", async (req, res, next) => {
       },
     });
     if (!user) {
-      return res.status(401).json({ error: "Invalid email/password" });
+      res.status(401).json({ error: "Invalid email/password" });
+      return;
     }
     const match = await bcrypt.compare(password, user.password);
     if (!match) {
-      return res.status(401).json({ error: "Invalid email/password" });
+      res.status(401).json({ error: "Invalid email/password" });
+      return;
     }
 
     const token = jwt.sign({ id: user.id, role: user.role }, config.jwtSecret, {
@@ -130,8 +131,10 @@ router.post("/login", async (req, res, next) => {
         email: email,
       },
     });
+    return;
   } catch (error) {
     next(error);
+    return;
   }
 });
 

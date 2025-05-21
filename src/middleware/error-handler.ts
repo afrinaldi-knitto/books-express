@@ -32,36 +32,42 @@ export function errorHandler(
   req: Request,
   res: Response,
   next: NextFunction
-) {
+): void {
   if (error instanceof Prisma.PrismaClientKnownRequestError) {
     const mapped = prismaErrorMap[error.code];
     if (mapped) {
-      return res.status(mapped.status).json({ error: mapped.error });
+      res.status(mapped.status).json({ error: mapped.error });
+      return;
     }
-
-    return res.status(400).json({ error: "Database error" });
+    res.status(400).json({ error: "Database error" });
+    return;
   }
 
   if (error instanceof Prisma.PrismaClientValidationError) {
-    return res.status(400).json({ error: "Invalid request to database" });
+    res.status(400).json({ error: "Invalid request to database" });
+    return;
   }
 
   if (error.name === "ZodError" && Array.isArray(error.errors)) {
     const messages = error.errors.map((item: any) => item.message);
-    return res.status(400).json({
+    const message = messages.join(", ");
+    res.status(400).json({
       error: "Validation error",
-      details: messages,
+      details: message,
     });
+    return;
   }
 
   if (
     error instanceof Prisma.PrismaClientInitializationError ||
     error instanceof Prisma.PrismaClientRustPanicError
   ) {
-    return res.status(500).json({ error: "Database initialization error" });
+    res.status(500).json({ error: "Database initialization error" });
+    return;
   }
 
   res.status(error.status || 500).json({
     error: "Internal server error",
   });
+  return;
 }

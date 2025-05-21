@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { Author } from "../models/author";
-import { db } from "../db";
 import { authenticationJwt, requireRole } from "../middleware/auth";
 import { prisma } from "../prisma";
 
@@ -133,18 +132,31 @@ router.post(
     req: Request<{}, {}, { name: string }>,
     res: Response<Success<Author> | { error: string }>,
     next: NextFunction
-  ) => {
+  ): Promise<void> => {
     const { name } = req.body;
-    if (!name) return res.status(400).json({ error: "Name is required" });
+    if (!name) {
+      res.status(400).json({ error: "Name is required" });
+      return;
+    }
     try {
       const author = await prisma.authors.create({
         data: {
           name: name,
         },
+        select: { id: true, name: true, books: true },
       });
-      res.status(201).json({ message: "Author created", data: author });
+      const authorWithBooks = {
+        id: author.id,
+        name: author.name,
+        books: author.books ? author.books.map((item) => item.title) : null,
+      };
+      res
+        .status(201)
+        .json({ message: "Author created", data: authorWithBooks });
+      return;
     } catch (error) {
       next(error);
+      return;
     }
   }
 );

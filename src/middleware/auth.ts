@@ -10,10 +10,11 @@ export function authenticationJwt(
   req: AuthRequest,
   res: Response,
   next: NextFunction
-) {
+): void {
   const authHeader = req.headers.authorization;
   if (!authHeader?.startsWith("Bearer ")) {
-    return res.status(401).json({ error: "Unauthorized" });
+    res.status(401).json({ error: "Unauthorized" });
+    return;
   }
   const token = authHeader.split(" ")[1];
   try {
@@ -22,13 +23,15 @@ export function authenticationJwt(
     next();
   } catch {
     res.status(401).json({ error: "Invalid or expired token" });
+    return;
   }
 }
 
 export function requireRole(role: string) {
-  return (req: AuthRequest, res: Response, next: NextFunction) => {
+  return (req: AuthRequest, res: Response, next: NextFunction): void => {
     if (req.user?.role !== role) {
-      return res.status(403).json({ error: "Forbidden" });
+      res.status(403).json({ error: "Forbidden" });
+      return;
     }
     next();
   };
