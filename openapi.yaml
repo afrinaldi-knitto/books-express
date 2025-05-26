@@ -98,7 +98,7 @@ paths:
                 app: My Backend
                 version: 1.0.0
 
-  /books:
+  /v1/books:
     get:
       summary: GET books
       tags: [Book]
@@ -110,7 +110,7 @@ paths:
         "500":
           description: Internal Server Error
 
-  /book/{id}:
+  /v1/book/{id}:
     get:
       summary: Get book
       tags: [Book]
@@ -127,7 +127,7 @@ paths:
           description: Not found
         "500":
           description: Internal server error
-    put:
+    patch:
       summary: Update a book
       security:
         - bearerAuth: []
@@ -171,7 +171,7 @@ paths:
         "404":
           description: Not Found
 
-  /book:
+  /v1/book:
     post:
       summary: Insert book
       security:
@@ -197,7 +197,7 @@ paths:
         "500":
           description: Internal Server Error
 
-  /authors:
+  /v1/authors:
     get:
       summary: Get all authors
       tags: [Author]
@@ -207,7 +207,7 @@ paths:
         "500":
           description: Internal server error
 
-  /author/{id}:
+  /v1/author/{id}:
     get:
       summary: Get author
       tags: [Author]
@@ -269,7 +269,7 @@ paths:
         "500":
           description: Internal server error
 
-  /author:
+  /v1/author:
     post:
       summary: Create new author
       security:

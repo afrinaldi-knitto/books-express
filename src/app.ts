@@ -1,7 +1,5 @@
 import express from "express";
 import routerInfo from "./routes/info";
-import routerAuth from "./routes/authors";
-import routerBooks from "./routes/books";
 import routerUsers from "./routes/users";
 import swaggerUi from "swagger-ui-express";
 import { swaggerSpec, swaggerUiExpress } from "./swagger";
@@ -11,6 +9,9 @@ import helmet from "helmet";
 import cors from "cors";
 import rateLimit from "express-rate-limit";
 import YAML from "yamljs";
+import morgan from "morgan";
+import { logger } from "./logger";
+import routerV1 from "./routes";
 
 const app = express();
 const swaggerDocument = YAML.load("./openapi.yaml");
@@ -36,11 +37,17 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 //   swaggerUiExpress.serve,
 //   swaggerUiExpress.setup(swaggerSpec)
 // );
+app.use(
+  morgan("combined", {
+    stream: {
+      write: (message) => logger.info(message.trim()),
+    },
+  })
+);
 
 app.use("/api", routerInfo);
-app.use("/api", routerBooks);
-app.use("/api", routerAuth);
 app.use("/api", routerUsers);
+app.use("/api", routerV1);
 app.get("/", (req, res) => {
   res.json({ message: "everything is running" });
 });
