@@ -9,5 +9,6 @@ export interface Book {
 
 export interface BookPayload {
   title: string;
+  slug: string;
   author_id: number | null;
 }

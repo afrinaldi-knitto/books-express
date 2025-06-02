@@ -3,6 +3,7 @@ import {
   createBook,
   deleteBook,
   getBookById,
+  getBookBySlug,
   getBooks,
   updateBook,
 } from "../../controllers/book.controller";
@@ -55,6 +56,29 @@ router.get("/books", getBooks);
  *         description: Internal server error
  */
 router.get("/book/:id", getBookById);
+
+/**
+ * @openapi
+ * /api/v1/book/slug/{slug}:
+ *   get:
+ *     summary: Get book
+ *     tags:
+ *       - Book
+ *     parameters:
+ *       - in : path
+ *         name : slug
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Success
+ *       400:
+ *         description: Not found
+ *       500:
+ *         description: Internal server error
+ */
+router.get("/book/slug/:slug", getBookBySlug);
 
 /**
  * @openapi

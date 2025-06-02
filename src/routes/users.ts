@@ -106,7 +106,7 @@ router.post("/login", async (req, res, next): Promise<void> => {
   try {
     const { email, password } = UserLoginSchema.parse(req.body);
 
-    const user = await prisma.users.findFirstOrThrow({
+    const user = await prisma.users.findFirst({
       where: {
         email: email,
       },

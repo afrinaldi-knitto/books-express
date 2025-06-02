@@ -19,14 +19,18 @@ const swaggerDocument = YAML.load("./openapi.yaml");
 app.use(helmet());
 app.use(
   cors({
-    origin: ["http://localhost:3000", "http://localhost:2201/"],
+    origin: [
+      "http://localhost:3000",
+      "http://localhost:2201/",
+      "http://192.168.21.22:4424",
+    ],
     credentials: true,
   })
 );
 app.use(
   rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 100,
+    windowMs: 60 * 1000,
+    max: 50,
     message: { error: "Too many requests, please try again later." },
   })
 );

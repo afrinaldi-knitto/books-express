@@ -5,6 +5,7 @@ import {
   createAuthor,
   updateAuthor,
   deleteAuthor,
+  getAuthorBySlug,
 } from "../../controllers/author.controller";
 import { authenticationJwt, requireRole } from "../../middleware/auth";
 
@@ -82,6 +83,29 @@ router.get("/author/:id", getAuthorById);
  *         description: Internal server error
  */
 router.post("/author", authenticationJwt, createAuthor);
+
+/**
+ * @openapi
+ * /api/v1/author/slug/{slug}:
+ *   get:
+ *     summary: Get author
+ *     tags:
+ *       - Author
+ *     parameters:
+ *       - in : path
+ *         name : slug
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Success
+ *       400:
+ *         description: Not found
+ *       500:
+ *         description: Internal server error
+ */
+router.get("/author/slug/:slug", getAuthorBySlug);
 
 /**
  * @openapi

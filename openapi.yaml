@@ -171,6 +171,24 @@ paths:
         "404":
           description: Not Found
 
+  /v1/book/slug/{slug}:
+    get:
+      summary: Get book
+      tags: [Book]
+      parameters:
+        - in: path
+          name: slug
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Success
+        "400":
+          description: Not found
+        "500":
+          description: Internal server error
+
   /v1/book:
     post:
       summary: Insert book
@@ -266,6 +284,24 @@ paths:
           description: Updated
         "400":
           description: Not Found
+        "500":
+          description: Internal server error
+
+  /v1/author/slug/{slug}:
+    get:
+      summary: Get author
+      tags: [Author]
+      parameters:
+        - in: path
+          name: slug
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Success
+        "400":
+          description: Not found
         "500":
           description: Internal server error
 

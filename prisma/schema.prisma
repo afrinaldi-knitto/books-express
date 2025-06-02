@@ -10,12 +10,14 @@ datasource db {
 model Authors {
   id    Int     @id @default(autoincrement())
   name  String  @db.VarChar(50)
+  slug  String? @unique @db.VarChar(100)
   books Books[]
 }
 
 model Books {
   id        Int      @id @default(autoincrement())
   title     String   @db.VarChar(255)
+  slug      String?  @unique @db.VarChar(150)
   author_id Int?
   authors   Authors? @relation(fields: [author_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "books_ibfk_1")
 
